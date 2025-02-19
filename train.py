@@ -68,7 +68,7 @@ def main(config):
     writer = WanDBWriter(project_name="DL-BHW-2", config=configs) if config["wandb"] else EmptyWriter()
 
     trainable_params = filter(lambda p: p.requires_grad, model.parameters())
-    loss_fn = CrossEntropyLossWrapper().to(device)
+    loss_fn = CrossEntropyLossWrapper(ignore_index=dataset_train.PAD).to(device)
     optimizer = torch.optim.AdamW(trainable_params, lr=configs["lr"])
     metrics = [Bleu()]
     scheduler = WarmupLR(
