@@ -132,7 +132,7 @@ class Trainer:
         output = self.model(batch["source"], batch["dest"][:, :-1])
         batch.update(output)
 
-        loss = self.criterion(batch["output"].reshape(-1, batch["output"].shape[-1]), batch["dest"][:, 1:].reshape(-1))
+        loss = self.criterion(predictions=batch["output"].reshape(-1, batch["output"].shape[-1]), labels=batch["dest"][:, 1:].reshape(-1))
         batch.update(loss)
 
         if self.is_train:
