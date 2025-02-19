@@ -152,6 +152,8 @@ class Trainer:
         tracker.update(self.criterion.name, batch["loss"].item())
 
         for metric in self.metrics:
+            if metric.name == "Bleu":
+                continue
             tracker.update(metric.name, metric(**batch))
 
         return batch
