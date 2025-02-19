@@ -92,4 +92,4 @@ class TranslateTransformer(nn.Module):
     def _generate_attn_mask(self, x: Tensor) -> Tensor:
         size = x.shape[1]
 
-        return torch.triu(torch.full((size, size), False), 1).to(x.device)
+        return torch.triu(torch.full((size, size), float('-inf')), 1).to(x.device)
