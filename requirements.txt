@@ -1,0 +1,10 @@
+torch==2.6.0
+torchtext==0.18.0
+sacrebleu==2.5.1
+sentencepiece==0.2.0
+tqdm
+numpy
+pandas
+wandb
+
+gdown # да-да, не из окружения, но как блин мне еще датасет с гугл диска скачать
