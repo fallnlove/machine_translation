@@ -142,12 +142,12 @@ class Trainer:
             self.writer.step()
             if self.scheduler is not None:
                 self.scheduler.step()
-        
-        batch["translated"] = []
-        for i in range(batch["source"].shape[0]):
-            output = self.model.translate(batch["source"][i], batch["length"][i], batch["length"][i] + 10)
-            sentence = self.datasets["train"].dest_tokens2text(output.squeeze().cpu().numpy().tolist())
-            batch["translated"].append(sentence)
+        if not self.is_train:
+            batch["translated"] = []
+            for i in range(batch["source"].shape[0]):
+                output = self.model.translate(batch["source"][i], batch["length"][i], batch["length"][i] + 10)
+                sentence = self.datasets["train"].dest_tokens2text(output.squeeze().cpu().numpy().tolist())
+                batch["translated"].append(sentence)
 
         tracker.update(self.criterion.name, batch["loss"].item())
 
@@ -205,6 +205,8 @@ class Trainer:
         Input:
             batch (dict): batch of data.
         """
+        if self.is_train:
+            return
 
         tuples = list(zip(range(examples_to_log), batch["translated"], batch["ground_truth"]))
 
