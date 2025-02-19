@@ -44,7 +44,7 @@ class Trainer:
         self.transforms = transforms
 
         self.train_tracker = MetricTracker(
-            [metric.name for metric in self.metrics] + ["grad_norm", criterion.name]
+            ["grad_norm", criterion.name]
         )
 
         self.eval_tracker = MetricTracker(
