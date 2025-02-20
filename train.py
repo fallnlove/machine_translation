@@ -38,7 +38,7 @@ def main(config):
     vocabs = {}
     for language in dataset_train.get_languages():
         vocabs[language] = build_vocab_from_iterator(
-            dataset_train.get_texts()[language] + dataset_val.get_texts()[language],
+            [dataset_train.get_texts()[language] + dataset_val.get_texts()[language]],
             min_freq=configs["min_freq"],
             specials=["<pad>", "<unk>", "<bos>", "<eos>"],
             special_first=True,
