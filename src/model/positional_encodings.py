@@ -2,7 +2,7 @@ import torch
 from torch import nn, Tensor
 
 class PositionalEncoding(nn.Module):
-    def __init__(self, input_dim: int = 144, max_len: int = 5000):
+    def __init__(self, input_dim: int = 144, max_len: int = 5000, dropout_rate: float = 0.1):
         super().__init__()
 
         idx = 1.0 / 10000 ** (torch.arange(0, input_dim, 2) / input_dim)
@@ -12,6 +12,8 @@ class PositionalEncoding(nn.Module):
         self.embedding[:, 0::2] = torch.sin(pos * idx)
         self.embedding[:, 1::2] = torch.cos(pos * idx)
 
+        self.dropout = nn.Dropout(dropout_rate)
+
     def forward(self, x: Tensor) -> Tensor:
         """
         Args:
@@ -19,4 +21,4 @@ class PositionalEncoding(nn.Module):
         Returns:
             x (Tensor): Tensor of shape (B, T, C)
         """
-        return x + self.embedding[None, : x.shape[1], :].to(x.device)
+        return self.dropout(x + self.embedding[None, : x.shape[1], :].to(x.device))

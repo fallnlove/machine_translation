@@ -25,7 +25,7 @@ class TranslateTransformer(nn.Module):
 
         self.source_embeddings = Embedding(num_embeddings=n_vocab_source, embedding_dim=d_vocab, padding_idx=pad_idx)
         self.dest_embeddings = Embedding(num_embeddings=n_vocab_dest, embedding_dim=d_vocab, padding_idx=pad_idx)
-        self.positional_encodings = PositionalEncoding(input_dim=d_vocab)
+        self.positional_encodings = PositionalEncoding(input_dim=d_vocab, dropout_rate=dropout)
         self.transformer = Transformer(d_model=d_model,
                                        nhead=nhead,
                                        num_encoder_layers=num_encoder_layers,
@@ -44,7 +44,7 @@ class TranslateTransformer(nn.Module):
         output = self.transformer(
             src=source_embed,
             tgt=dest_embed,
-            tgt_mask=self._generate_attn_mask(dest_embed),
+            tgt_mask=self._generate_attn_mask(dest),
             src_key_padding_mask=self._generate_padding_mask(source),
             tgt_key_padding_mask=self._generate_padding_mask(dest),
         )
@@ -57,10 +57,10 @@ class TranslateTransformer(nn.Module):
         return self.transformer.encoder(source)
     
     def decode(self, dest: Tensor, memory: Tensor) -> Tensor:
-        dest = self.positional_encodings(self.dest_embeddings(dest))
+        dest_embed = self.positional_encodings(self.dest_embeddings(dest))
 
         output = self.transformer.decoder(
-            tgt=dest,
+            tgt=dest_embed,
             memory=memory,
             tgt_mask=self._generate_attn_mask(dest),
         )
@@ -77,7 +77,7 @@ class TranslateTransformer(nn.Module):
 
         for _ in range(1, max_length):
             logits = self.decode(output, memory)
-            token = logits.argmax(dim=-1).item()
+            token = logits.argmax(dim=1).item()
 
             output = torch.cat([output, torch.LongTensor([[token]]).to(source.device)], dim=-1)
 
