@@ -138,14 +138,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "-batchsize",
         "--batchsize",
-        default=128,
+        default=64,
         type=int,
         help="Batch size",
     )
     parser.add_argument(
         "-minfreq",
         "--minfreq",
-        default=1,
+        default=5,
         type=int,
         help="Minimum frequency",
     )
