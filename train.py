@@ -145,7 +145,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-minfreq",
         "--minfreq",
-        default=10,
+        default=1,
         type=int,
         help="Minimum frequency",
     )

@@ -14,9 +14,9 @@ class TranslateTransformer(nn.Module):
         d_vocab: int = None,
         d_model: int = 512,
         nhead: int = 8,
-        num_encoder_layers: int = 6,
-        num_decoder_layers: int = 6,
-        dim_feedforward: int = 2048,
+        num_encoder_layers: int = 3,
+        num_decoder_layers: int = 3,
+        dim_feedforward: int = 1024,
         dropout: float = 0.1,
     ):
         super(TranslateTransformer, self).__init__()
