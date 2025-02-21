@@ -69,7 +69,7 @@ def main(config):
 
     trainable_params = filter(lambda p: p.requires_grad, model.parameters())
     loss_fn = CrossEntropyLossWrapper(ignore_index=dataset_train.PAD).to(device)
-    optimizer = torch.optim.AdamW(trainable_params, lr=configs["lr"])
+    optimizer = torch.optim.Adam(trainable_params, lr=configs["lr"], betas=(0.9, 0.98), eps=1e-9)
     metrics = [Bleu()]
     scheduler = WarmupLR(
         optimizer, warmup_steps=configs["warmup_epochs"] * len(train_loader)
