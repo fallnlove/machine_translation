@@ -22,6 +22,7 @@ class TranslateTransformer(nn.Module):
         super(TranslateTransformer, self).__init__()
         if d_vocab is None:
             d_vocab = d_model
+        self.d_vocab = d_vocab
 
         self.source_embeddings = Embedding(num_embeddings=n_vocab_source, embedding_dim=d_vocab, padding_idx=pad_idx)
         self.dest_embeddings = Embedding(num_embeddings=n_vocab_dest, embedding_dim=d_vocab, padding_idx=pad_idx)
@@ -38,8 +39,8 @@ class TranslateTransformer(nn.Module):
         self.pad_idx = pad_idx
     
     def forward(self, source: Tensor, dest: Tensor, **batch) -> Tensor:
-        source_embed = self.positional_encodings(self.source_embeddings(source))
-        dest_embed = self.positional_encodings(self.dest_embeddings(dest))
+        source_embed = self.positional_encodings(self.source_embeddings(source) * torch.sqrt(self.d_vocab))
+        dest_embed = self.positional_encodings(self.dest_embeddings(dest) * torch.sqrt(self.d_vocab))
 
         output = self.transformer(
             src=source_embed,
