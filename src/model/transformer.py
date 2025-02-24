@@ -54,12 +54,12 @@ class TranslateTransformer(nn.Module):
         return {"output": self.fc(output)}
 
     def encode(self, source: Tensor) -> Tensor:
-        source = self.positional_encodings(self.source_embeddings(source))
+        source = self.positional_encodings(self.source_embeddings(source) * math.sqrt(self.d_vocab))
 
         return self.transformer.encoder(source)
     
     def decode(self, dest: Tensor, memory: Tensor) -> Tensor:
-        dest_embed = self.positional_encodings(self.dest_embeddings(dest))
+        dest_embed = self.positional_encodings(self.dest_embeddings(dest) * math.sqrt(self.d_vocab))
 
         output = self.transformer.decoder(
             tgt=dest_embed,
