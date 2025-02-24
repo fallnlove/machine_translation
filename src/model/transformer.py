@@ -64,7 +64,6 @@ class TranslateTransformer(nn.Module):
         output = self.transformer.decoder(
             tgt=dest_embed,
             memory=memory,
-            tgt_mask=self._generate_attn_mask(dest),
         )
 
         return self.fc(output[:, -1, :])
