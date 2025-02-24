@@ -1,3 +1,4 @@
+import math
 import torch
 from torch import nn, Tensor
 from torch.nn.modules import Embedding, Transformer
@@ -39,8 +40,8 @@ class TranslateTransformer(nn.Module):
         self.pad_idx = pad_idx
     
     def forward(self, source: Tensor, dest: Tensor, **batch) -> Tensor:
-        source_embed = self.positional_encodings(self.source_embeddings(source) * torch.sqrt(self.d_vocab))
-        dest_embed = self.positional_encodings(self.dest_embeddings(dest) * torch.sqrt(self.d_vocab))
+        source_embed = self.positional_encodings(self.source_embeddings(source) * math.sqrt(self.d_vocab))
+        dest_embed = self.positional_encodings(self.dest_embeddings(dest) * math.sqrt(self.d_vocab))
 
         output = self.transformer(
             src=source_embed,
