@@ -77,7 +77,7 @@ class CustomDataset(Dataset):
         return " ".join(self.vocabs[self.languages[0]].lookup_tokens(tokens)).replace("<eos>", "").replace("<bos>", "").strip()
     
     def dest_tokens2text(self, tokens):
-        return " ".join(self.vocabs[self.languages[1]].lookup_tokens(tokens)).replace("<eos>", "").replace("<bos>", "").strip()
+        return " ".join(self.vocabs[self.languages[1]].lookup_tokens(tokens)).strip()
     
     def set_vocab(self, vocab):
         self.vocabs = vocab
