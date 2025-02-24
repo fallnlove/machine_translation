@@ -117,14 +117,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "-epochs",
         "--epochs",
-        default=31,
+        default=101,
         type=int,
         help="Number of training epochs",
     )
     parser.add_argument(
         "-warmupepochs",
         "--warmupepochs",
-        default=1,
+        default=5,
         type=int,
         help="Number of warmup epochs",
     )
@@ -138,7 +138,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-batchsize",
         "--batchsize",
-        default=64,
+        default=128,
         type=int,
         help="Batch size",
     )
