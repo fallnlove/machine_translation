@@ -38,6 +38,13 @@ class TranslateTransformer(nn.Module):
         self.fc = nn.Linear(d_model, n_vocab_dest)
 
         self.pad_idx = pad_idx
+        
+        self.init()
+
+    def init(self):
+        for p in self.parameters():
+            if p.dim() > 1:
+                nn.init.xavier_uniform_(p)
     
     def forward(self, source: Tensor, dest: Tensor, **batch) -> Tensor:
         source_embed = self.positional_encodings(self.source_embeddings(source) * math.sqrt(self.d_vocab))
