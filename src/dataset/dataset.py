@@ -55,11 +55,6 @@ class CustomDataset(Dataset):
         for language in self.languages:
             self.tokenizers[language] = get_tokenizer(None, language)
 
-        if shuffle_index:
-            random.seed(42)
-            for language in self.languages:
-                random.shuffle(self.texts[language])
-
     def __len__(self):
         return len(self.texts[self.languages[0]])
 
