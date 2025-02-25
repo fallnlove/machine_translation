@@ -1,7 +1,7 @@
 import math
 import torch
 from torch import nn, Tensor
-from torch.nn.modules import Embedding, Transformer
+from torch.nn import Embedding, Transformer
 
 from src.model.positional_encodings import PositionalEncoding
 from src.dataset import CustomDataset
@@ -17,7 +17,7 @@ class TranslateTransformer(nn.Module):
         nhead: int = 8,
         num_encoder_layers: int = 3,
         num_decoder_layers: int = 3,
-        dim_feedforward: int = 1024,
+        dim_feedforward: int = 512,
         dropout: float = 0.1,
     ):
         super(TranslateTransformer, self).__init__()
