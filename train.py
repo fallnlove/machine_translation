@@ -51,6 +51,9 @@ def main(config):
     model = TranslateTransformer(n_vocab_source=len(vocabs["de"]), n_vocab_dest=len(vocabs["en"]), pad_idx=dataset_train.PAD)
     model = model.to(device)
 
+    pytorch_total_params = sum(p.numel() for p in model.parameters())
+    print(pytorch_total_params, len(vocabs["de"]), len(vocabs["en"]))
+
     train_loader = DataLoader(
         dataset_train,
         batch_size=configs["batch_size"],
@@ -67,13 +70,13 @@ def main(config):
     )
     writer = WanDBWriter(project_name="DL-BHW-2", config=configs) if config["wandb"] else EmptyWriter()
 
-    trainable_params = filter(lambda p: p.requires_grad, model.parameters())
     loss_fn = CrossEntropyLossWrapper(ignore_index=dataset_train.PAD).to(device)
-    optimizer = torch.optim.Adam(trainable_params, lr=configs["lr"], betas=(0.9, 0.98), eps=1e-9)
+    optimizer = torch.optim.Adam(model.parameters(), lr=configs["lr"], betas=(0.9, 0.98), eps=1e-9)
     metrics = [Bleu()]
-    scheduler = WarmupLR(
-        optimizer, warmup_steps=configs["warmup_epochs"] * len(train_loader)
-    )
+    # scheduler = WarmupLR(
+    #     optimizer, warmup_steps=configs["warmup_epochs"] * len(train_loader)
+    # )
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100000)
 
     trainer = Trainer(
         model=model,
@@ -131,14 +134,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "-lr",
         "--lr",
-        default=3e-4,
+        default=1e-4,
         type=float,
         help="Learning rate for training",
     )
     parser.add_argument(
         "-batchsize",
         "--batchsize",
-        default=128,
+        default=32,
         type=int,
         help="Batch size",
     )

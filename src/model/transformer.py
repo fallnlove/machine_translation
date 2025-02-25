@@ -61,9 +61,9 @@ class TranslateTransformer(nn.Module):
         return {"output": self.fc(output)}
 
     def encode(self, source: Tensor) -> Tensor:
-        source = self.positional_encodings(self.source_embeddings(source) * math.sqrt(self.d_vocab))
+        source_embed = self.positional_encodings(self.source_embeddings(source) * math.sqrt(self.d_vocab))
 
-        return self.transformer.encoder(source)
+        return self.transformer.encoder(source_embed)
     
     def decode(self, dest: Tensor, memory: Tensor) -> Tensor:
         dest_embed = self.positional_encodings(self.dest_embeddings(dest) * math.sqrt(self.d_vocab))
@@ -85,7 +85,7 @@ class TranslateTransformer(nn.Module):
 
         for _ in range(1, max_length):
             logits = self.decode(output, memory)
-            token = logits.argmax(dim=1).item()
+            token = logits.argmax(dim=-1).item()            
 
             output = torch.cat([output, torch.LongTensor([[token]]).to(source.device)], dim=-1)
 

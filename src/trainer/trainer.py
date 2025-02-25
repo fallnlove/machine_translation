@@ -97,14 +97,14 @@ class Trainer:
         for index, batch in tqdm(
             enumerate(self.dataloaders["train"]), total=len(self.dataloaders["train"])
         ):
-            batch = self._process_batch(batch, self.train_tracker)
+            batch_log = self._process_batch(batch, self.train_tracker)
 
             self.train_tracker.update("grad_norm", self._get_grad_norm())
 
             if index % 100 == 0:
                 self.writer.log_scalar("learning rate", self.scheduler.get_last_lr()[0])
                 self.writer.log_metrics(self.train_tracker)
-                self._log_batch(batch)
+                self._log_batch(batch_log)
                 self.train_tracker.reset()
 
     @torch.no_grad()
@@ -117,13 +117,13 @@ class Trainer:
         for batch in tqdm(
             self.dataloaders["eval"], total=len(self.dataloaders["eval"])
         ):
-            batch = self._process_batch(batch, self.eval_tracker)
+            batch_log = self._process_batch(batch, self.eval_tracker)
 
         self.writer.log_metrics(self.eval_tracker)
-        self._log_batch(batch)
+        self._log_batch(batch_log)
 
-    def _process_batch(self, batch, tracker):
-        batch = self._move_to_device(batch)
+    def _process_batch(self, batch_, tracker):
+        batch = self._move_to_device(batch_)
         batch = self._transform_batch(batch)
 
         if self.is_train:
