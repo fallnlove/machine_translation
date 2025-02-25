@@ -73,10 +73,9 @@ def main(config):
     loss_fn = CrossEntropyLossWrapper(ignore_index=dataset_train.PAD).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=configs["lr"], betas=(0.9, 0.98), eps=1e-9)
     metrics = [Bleu()]
-    # scheduler = WarmupLR(
-    #     optimizer, warmup_steps=configs["warmup_epochs"] * len(train_loader)
-    # )
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100000)
+    scheduler = WarmupLR(
+        optimizer, warmup_steps=configs["warmup_epochs"] * len(train_loader)
+    )
 
     trainer = Trainer(
         model=model,
@@ -134,14 +133,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "-lr",
         "--lr",
-        default=1e-4,
+        default=3e-4,
         type=float,
         help="Learning rate for training",
     )
     parser.add_argument(
         "-batchsize",
         "--batchsize",
-        default=32,
+        default=128,
         type=int,
         help="Batch size",
     )
