@@ -32,7 +32,7 @@ def main(config):
         "min_freq": config["minfreq"],
     }
 
-    dataset_train = CustomDataset("train", config["path"], shuffle_index=True)
+    dataset_train = CustomDataset("train", config["path"])
     dataset_val = CustomDataset("val", config["path"])
 
     vocabs = {}
