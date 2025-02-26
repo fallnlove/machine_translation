@@ -1,8 +1,6 @@
 import argparse
 
 import torch
-import torchvision.transforms as transforms
-from torch import nn
 from torch.utils.data import DataLoader
 from torchtext.vocab import build_vocab_from_iterator
 
