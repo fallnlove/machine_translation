@@ -14,18 +14,13 @@ class Inferencer:
         model: nn.Module,
         device: str,
         dataloaders: dict,
-        transforms: dict = None,
-        test_augmentations=None,
-        num_augs: int = 100,
+        datasets: dict,
     ):
         self.model = model
 
         self.device = device
         self.dataloaders = dataloaders
-
-        self.transforms = transforms
-        self.test_augmentations = test_augmentations
-        self.num_augs = num_augs
+        self.datasets = datasets
 
         self.save_path = Path("./submissions/")
         if not self.save_path.exists():
@@ -36,16 +31,14 @@ class Inferencer:
         Run training process.
         """
 
-        self.table = []
+        self.predictions = []
         try:
             self._eval_process()
         except KeyboardInterrupt as e:
-            print("Keyboard interrupt. Saving checkpoint.")
-            self._save_checkpoint(-1)
+            print("Keyboard interrupt.")
 
-        self.table.sort(key=lambda x: x["Id"])
-        preds = pd.DataFrame(self.table, columns=["Id", "Category"])
-        preds.to_csv(str(self.save_path / "labels_test.csv"), index=False)
+        with open(str(self.save_path / "test1.de-en.en"), 'w') as f:
+            f.write("\n".join(self.predictions) + "\n")
 
     @torch.no_grad()
     def _eval_process(self):
@@ -58,24 +51,14 @@ class Inferencer:
             enumerate(self.dataloaders["test"]), total=len(self.dataloaders["test"])
         ):
             batch = self._process_batch(batch)
-            self._log_batch(batch)
 
     def _process_batch(self, batch):
         batch = self._move_to_device(batch)
 
-        if self.test_augmentations is not None:
-            output = 0
-            for _ in range(self.num_augs):
-                output += (
-                    self.model(**self._transform_test(batch))["predictions"].softmax(-1)
-                    / self.num_augs
-                )
-            output = {"predictions": output}
-        else:
-            batch = self._transform_batch(batch)
-            output = self.model(**batch)
-
-        batch.update(output)
+        for i in range(batch["source"].shape[0]):
+            output = self.model.translate(batch["source"][i], batch["length"][i], batch["length"][i] * 2 + 10)
+            sentence = self.datasets["test"].dest_tokens2text(output.squeeze().cpu().numpy().tolist())
+            self.predictions.append(sentence)
 
         return batch
 
@@ -88,56 +71,6 @@ class Inferencer:
         Output:
             batch (dict): batch of data
         """
-        batch["images"] = batch["images"].to(self.device)
+        batch["source"] = batch["source"].to(self.device)
 
         return batch
-
-    def _transform_test(self, batch: dict):
-        """
-        Transform batch of data.
-
-        Input:
-            batch (dict): batch of data
-        Output:
-            batch (dict): batch of data
-        """
-        if self.test_augmentations is None:
-            return batch
-
-        transform = self.test_augmentations
-
-        return {"images": transform(batch["images"])}
-
-    def _transform_batch(self, batch: dict):
-        """
-        Transform batch of data.
-
-        Input:
-            batch (dict): batch of data
-        Output:
-            batch (dict): batch of data
-        """
-        if self.transforms is None:
-            return batch
-
-        transform = self.transforms["test"]
-
-        batch["images"] = transform(batch["images"])
-
-        return batch
-
-    def _log_batch(self, batch: dict):
-        """
-        Log batch of data.
-        Input:
-            batch (dict): batch of data.
-        """
-
-        logits = batch["predictions"].argmax(-1).detach().cpu().numpy()
-        for name, logit in zip(batch["file_names"], logits):
-            self.table.append(
-                {
-                    "Id": name,
-                    "Category": logit,
-                }
-            )

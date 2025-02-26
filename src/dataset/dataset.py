@@ -69,10 +69,10 @@ class CustomDataset(Dataset):
         return data
     
     def source_tokens2text(self, tokens):
-        return " ".join(self.vocabs[self.languages[0]].lookup_tokens(tokens)).replace("<eos>", "").replace("<bos>", "").strip()
+        return " ".join(self.vocabs['de'].lookup_tokens(tokens)).replace("<eos>", "").replace("<bos>", "").strip()
     
     def dest_tokens2text(self, tokens):
-        return " ".join(self.vocabs[self.languages[1]].lookup_tokens(tokens)).replace("<eos>", "").replace("<bos>", "").strip()
+        return " ".join(self.vocabs['en'].lookup_tokens(tokens)).replace("<eos>", "").replace("<bos>", "").strip()
     
     def set_vocab(self, vocab):
         self.vocabs = vocab
