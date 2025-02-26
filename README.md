@@ -16,7 +16,7 @@ python main.py
 
 You can specify path to dataset using the `--path` option.
 
-## Inference pre-trained model
+<!-- ## Inference pre-trained model
 
 To inference the pre-trained model, download the weights with the command:
 
@@ -31,5 +31,7 @@ Start the inference process via the command:
 python inference.py
 ```
 
-You can specify the path to the dataset using the `--path` option. Predictions will
+You can specify the path to the dataset using the `--path` option.  -->
+
+Predictions will
 be saved in the `submissions` directory.
