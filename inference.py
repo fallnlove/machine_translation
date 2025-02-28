@@ -69,7 +69,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-modelpath",
         "--modelpath",
-        default="./models/model_90.pth",
+        default="./models/model_30.pth",
         type=str,
         help="path to pretrained model",
     )

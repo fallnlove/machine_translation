@@ -119,21 +119,21 @@ if __name__ == "__main__":
     parser.add_argument(
         "-epochs",
         "--epochs",
-        default=91,
+        default=31,
         type=int,
         help="Number of training epochs",
     )
     parser.add_argument(
         "-warmupepochs",
         "--warmupepochs",
-        default=5,
+        default=1,
         type=int,
         help="Number of warmup epochs",
     )
     parser.add_argument(
         "-lr",
         "--lr",
-        default=3e-4,
+        default=1e-4,
         type=float,
         help="Learning rate for training",
     )

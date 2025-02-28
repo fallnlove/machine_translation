@@ -95,7 +95,7 @@ class Trainer:
         self.model.train()
 
         for index, batch in tqdm(
-            enumerate(self.dataloaders["train"]), total=len(self.dataloaders["train"])
+            enumerate(self.dataloaders["train"]), total=len(self.dataloaders["train"]), desc=f"Training Epoch {epoch}"
         ):
             batch_log = self._process_batch(batch, self.train_tracker)
 
@@ -115,7 +115,7 @@ class Trainer:
         self.model.eval()
 
         for batch in tqdm(
-            self.dataloaders["eval"], total=len(self.dataloaders["eval"])
+            self.dataloaders["eval"], total=len(self.dataloaders["eval"]), desc=f"Validation Epoch {epoch}"
         ):
             batch_log = self._process_batch(batch, self.eval_tracker)
 

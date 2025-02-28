@@ -1,12 +1,11 @@
+import subprocess
+import os
 from torch import Tensor
-
-from torchtext.data.metrics import bleu_score
 
 
 class Bleu:
     def __init__(self):
         self.name = "Bleu"
-        self.metric_func = bleu_score
 
     def __call__(self, translated: Tensor, ground_truth: Tensor, **batch):
         """
@@ -17,4 +16,16 @@ class Bleu:
             output (int): bleu metric.
         """
 
-        return self.metric_func(translated, ground_truth)
+        with open('translated.en', 'w') as f:
+            f.write("\n".join(translated) + "\n")
+        with open('SECRET_FILE.en', 'w') as f:
+            f.write("\n".join(ground_truth) + "\n")
+
+        command = "cat translated.en | sacrebleu SECRET_FILE.en --tokenize none --width 2 -b"
+
+        result = subprocess.run(command, shell=True, text=True, capture_output=True)
+
+        os.remove('translated.en')
+        os.remove('SECRET_FILE.en')
+
+        return float(result.stdout)
