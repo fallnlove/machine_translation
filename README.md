@@ -1,4 +1,4 @@
-# Image Classification
+# Machine Translation
 
 ## Training model
 
