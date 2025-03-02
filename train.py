@@ -30,6 +30,7 @@ def main(config):
         "optimizer": "AdamW",
         "scheduler": "WarmUp",
         "min_freq": config["minfreq"],
+        "weight_sharing": config["weightsharing"],
     }
 
     dataset_train = CustomDataset("train", config["path"])
@@ -48,7 +49,7 @@ def main(config):
     dataset_train.set_vocab(vocabs)
     dataset_val.set_vocab(vocabs)
 
-    model = TranslateTransformer(n_vocab_source=len(vocabs["de"]), n_vocab_dest=len(vocabs["en"]), pad_idx=dataset_train.PAD)
+    model = TranslateTransformer(n_vocab_source=len(vocabs["de"]), n_vocab_dest=len(vocabs["en"]), pad_idx=dataset_train.PAD, weight_sharing=configs["weight_sharing"])
     model = model.to(device)
 
     pytorch_total_params = sum(p.numel() for p in model.parameters())
@@ -150,6 +151,14 @@ if __name__ == "__main__":
         default=5,
         type=int,
         help="Minimum frequency",
+    )
+    parser.add_argument(
+        "-weightsharing",
+        "--weightsharing",
+        default=False,
+        type=bool,
+        action=argparse.BooleanOptionalAction,
+        help="Use weight sharing in transformer",
     )
     config = parser.parse_args()
     main(vars(config))

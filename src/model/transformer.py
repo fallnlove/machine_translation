@@ -19,11 +19,13 @@ class TranslateTransformer(nn.Module):
         num_decoder_layers: int = 3,
         dim_feedforward: int = 1024,
         dropout: float = 0.3,
+        weight_sharing: bool = False,
     ):
         super(TranslateTransformer, self).__init__()
         if d_vocab is None:
             d_vocab = d_model
         self.d_vocab = d_vocab
+        self.weight_sharing = weight_sharing
 
         self.source_embeddings = Embedding(num_embeddings=n_vocab_source, embedding_dim=d_vocab, padding_idx=pad_idx)
         self.dest_embeddings = Embedding(num_embeddings=n_vocab_dest, embedding_dim=d_vocab, padding_idx=pad_idx)
@@ -41,10 +43,18 @@ class TranslateTransformer(nn.Module):
         
         self.init()
 
+        if self.weight_sharing:
+            self.fc.weight = self.dest_embeddings.weight
+            self.source_embeddings.weight = self.dest_embeddings.weight
+
     def init(self):
         for p in self.parameters():
             if p.dim() > 1:
                 nn.init.xavier_uniform_(p)
+        
+        nn.init.normal_(self.source_embeddings.weight, 0, 1 / math.sqrt(self.d_vocab))
+        nn.init.normal_(self.dest_embeddings.weight, 0, 1 / math.sqrt(self.d_vocab))
+        nn.init.normal_(self.fc.weight, 0, 1 / math.sqrt(self.d_vocab))
     
     def forward(self, source: Tensor, dest: Tensor, **batch) -> Tensor:
         source_embed = self.positional_encodings(self.source_embeddings(source) * math.sqrt(self.d_vocab))
