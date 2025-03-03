@@ -45,7 +45,7 @@ class TranslateTransformer(nn.Module):
 
         if self.weight_sharing:
             self.fc.weight = self.dest_embeddings.weight
-            self.source_embeddings.weight = self.dest_embeddings.weight
+            # self.source_embeddings.weight = self.dest_embeddings.weight
 
     def init(self):
         for p in self.parameters():
