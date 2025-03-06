@@ -31,6 +31,7 @@ def main(config):
         "scheduler": "WarmUp",
         "min_freq": config["minfreq"],
         "weight_sharing": config["weightsharing"],
+        "max_tokens": config["maxtokens"],
     }
 
     dataset_train = CustomDataset("train", config["path"])
@@ -43,6 +44,7 @@ def main(config):
             min_freq=configs["min_freq"],
             specials=["<pad>", "<unk>", "<bos>", "<eos>"],
             special_first=True,
+            max_tokens=configs["max_tokens"],
         )
 
         vocabs[language].set_default_index(dataset_train.UNK)
@@ -159,6 +161,13 @@ if __name__ == "__main__":
         type=bool,
         action=argparse.BooleanOptionalAction,
         help="Use weight sharing in transformer",
+    )
+    parser.add_argument(
+        "-maxtokens",
+        "--maxtokens",
+        default=None,
+        type=int,
+        help="Minimum frequency",
     )
     config = parser.parse_args()
     main(vars(config))
