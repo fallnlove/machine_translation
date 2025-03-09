@@ -35,3 +35,4 @@ You can specify the path to the dataset using the `--path` option.  -->
 
 Predictions will
 be saved in the `submissions` directory.
+# hse_hw2_chip
