@@ -32,6 +32,7 @@ def main(config):
         "min_freq": config["minfreq"],
         "weight_sharing": config["weightsharing"],
         "max_tokens": config["maxtokens"],
+        "dropout": config["dropout"],
     }
 
     dataset_train = CustomDataset("train", config["path"])
@@ -51,7 +52,7 @@ def main(config):
     dataset_train.set_vocab(vocabs)
     dataset_val.set_vocab(vocabs)
 
-    model = TranslateTransformer(n_vocab_source=len(vocabs["de"]), n_vocab_dest=len(vocabs["en"]), pad_idx=dataset_train.PAD, weight_sharing=configs["weight_sharing"])
+    model = TranslateTransformer(n_vocab_source=len(vocabs["de"]), n_vocab_dest=len(vocabs["en"]), pad_idx=dataset_train.PAD, weight_sharing=configs["weight_sharing"], dropout=configs["dropout"])
     model = model.to(device)
 
     pytorch_total_params = sum(p.numel() for p in model.parameters())
@@ -168,6 +169,13 @@ if __name__ == "__main__":
         default=None,
         type=int,
         help="Minimum frequency",
+    )
+    parser.add_argument(
+        "-dropout",
+        "--dropout",
+        default=0.3,
+        type=float,
+        help="Dropout rate",
     )
     config = parser.parse_args()
     main(vars(config))
