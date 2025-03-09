@@ -28,7 +28,7 @@ def main(config):
         "batch_size": config["batchsize"],
         "model": "Transformer",
         "optimizer": "AdamW",
-        "scheduler": "WarmUp",
+        "scheduler": "Const",
         "min_freq": config["minfreq"],
         "weight_sharing": config["weightsharing"],
         "max_tokens": config["maxtokens"],
@@ -77,8 +77,8 @@ def main(config):
     loss_fn = CrossEntropyLossWrapper(ignore_index=dataset_train.PAD).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=configs["lr"], betas=(0.9, 0.98), eps=1e-9)
     metrics = [Bleu()]
-    scheduler = WarmupLR(
-        optimizer, warmup_steps=configs["warmup_epochs"] * len(train_loader)
+    scheduler = torch.optim.lr_scheduler.StepLR(
+        optimizer, step_size=configs["warmup_epochs"] * 1000
     )
 
     trainer = Trainer(
