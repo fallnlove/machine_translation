@@ -78,7 +78,7 @@ def main(config):
     optimizer = torch.optim.Adam(model.parameters(), lr=configs["lr"], betas=(0.9, 0.98), eps=1e-9)
     metrics = [Bleu()]
     scheduler = torch.optim.lr_scheduler.StepLR(
-        optimizer, step_size=configs["warmup_epochs"] * 1000
+        optimizer, step_size=1000000
     )
 
     trainer = Trainer(
