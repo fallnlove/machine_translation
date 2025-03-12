@@ -62,7 +62,7 @@ class Inferencer:
             sent = batch["source_text"][i]
             for j in range(batch["source"].shape[1]):
                 if batch["source"][i, j] == self.datasets["test"].UNK:
-                    unk.append(sent[j])
+                    unk.append(sent[j - 1])
             output = self.model.translate(batch["source"][i], batch["length"][i], batch["length"][i] * 2 + 10, beam_size=self.beam_size)
             sentence = self.datasets["test"].dest_tokens2text(output.squeeze().cpu().numpy().tolist())
             tokens = sentence.split(' ')
