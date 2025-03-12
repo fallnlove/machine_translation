@@ -29,6 +29,7 @@ def collate_fn(dataset_items: list[dict]) -> dict[Union[torch.Tensor, list]]:
     )
     result_batch["length"] = [item["length"] for item in dataset_items]
     result_batch["ground_truth"] = [item["ground_truth"] for item in dataset_items]
+    result_batch["source_text"] = [item["source_text"] for item in dataset_items]
 
     if "dest" in dataset_items[0].keys():
         result_batch["dest"] = pad_sequence(
