@@ -58,9 +58,22 @@ class Inferencer:
         batch = self._move_to_device(batch)
 
         for i in range(batch["source"].shape[0]):
+            unk = []
+            for j in range(batch["source"].shape[1]):
+                if batch["source"][i, j] == self.datasets["test"].UNK:
+                    unk.append(self.datasets["test"].dest_tokens2text([batch["source"][i, j].item()]))
             output = self.model.translate(batch["source"][i], batch["length"][i], batch["length"][i] * 2 + 10, beam_size=self.beam_size)
             sentence = self.datasets["test"].dest_tokens2text(output.squeeze().cpu().numpy().tolist())
-            self.predictions.append(sentence)
+            tokens = sentence.split(' ')
+
+            for j in range(len(tokens)):
+                if tokens[j] == '<unk>' and len(unk) > 0:
+                    tokens[j] = unk[0]
+                    if len(unk) > 1:
+                        unk = unk[1:]
+
+
+            self.predictions.append(" ".join(tokens))
 
         return batch
 
