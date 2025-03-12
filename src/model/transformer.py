@@ -101,7 +101,7 @@ class TranslateTransformer(nn.Module):
                     new_candidate.append((output, score))
                     continue
 
-                logits = self.decode(output, memory)
+                logits = self.decode(output, memory).softmax(dim=-1)
                 topk = torch.topk(logits, beam_size, dim=-1)
                 for i in range(beam_size):
                     token = topk.indices[0, i].item()
