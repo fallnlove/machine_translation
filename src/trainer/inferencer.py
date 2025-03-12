@@ -13,12 +13,14 @@ class Inferencer:
         self,
         model: nn.Module,
         device: str,
+        beam_size: int,
         dataloaders: dict,
         datasets: dict,
     ):
         self.model = model
 
         self.device = device
+        self.beam_size = beam_size
         self.dataloaders = dataloaders
         self.datasets = datasets
 
@@ -56,7 +58,7 @@ class Inferencer:
         batch = self._move_to_device(batch)
 
         for i in range(batch["source"].shape[0]):
-            output = self.model.translate(batch["source"][i], batch["length"][i], batch["length"][i] * 2 + 10)
+            output = self.model.translate(batch["source"][i], batch["length"][i], batch["length"][i] * 2 + 10, beam_size=self.beam_size)
             sentence = self.datasets["test"].dest_tokens2text(output.squeeze().cpu().numpy().tolist())
             self.predictions.append(sentence)
 

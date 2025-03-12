@@ -85,23 +85,34 @@ class TranslateTransformer(nn.Module):
 
         return self.fc(output[:, -1, :])
     
-    def translate(self, source: Tensor, length: int, max_length: int = 200, **batch):
+    def translate(self, source: Tensor, length: int, max_length: int = 200, beam_size: int = 1, **batch):
         source = source[:length]
         if source.ndim == 1:
             source = source.unsqueeze(0)
 
         memory = self.encode(source)
         output = torch.LongTensor([[CustomDataset.BOS]]).to(source.device)
+        candidate = [(output, 0)]
 
-        for _ in range(1, max_length):
-            logits = self.decode(output, memory)
-            token = logits.argmax(dim=-1).item()            
+        for _ in range(max_length):
+            new_candidate = []
+            for output, score in candidate:
+                if output[0, -1].item() == CustomDataset.EOS:
+                    new_candidate.append((output, score))
+                    continue
 
-            output = torch.cat([output, torch.LongTensor([[token]]).to(source.device)], dim=-1)
+                logits = self.decode(output, memory)
+                topk = torch.topk(logits, beam_size, dim=-1)
+                for i in range(beam_size):
+                    token = topk.indices[0, i].item()
+                    new_output = torch.cat([output, torch.LongTensor([[token]]).to(source.device)], dim=-1)
+                    new_score = score + topk.values[0, i].item()
 
-            if token == CustomDataset.EOS:
-                break
+                    new_candidate.append((new_output, new_score))
 
+            candidate = sorted(new_candidate, key=lambda x: x[1], reverse=True)[:beam_size]
+
+        output, _ = candidate[0]
         return output
 
     def _generate_padding_mask(self, x: Tensor) -> Tensor:

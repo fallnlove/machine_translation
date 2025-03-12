@@ -46,6 +46,7 @@ def main(config):
     inferencer = Inferencer(
         model=model,
         device=device,
+        beam_size=config["beamsize"],
         dataloaders={
             "test": dataloader,
         },
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-modelpath",
         "--modelpath",
-        default="./models/model_30.pth",
+        default="./models/model_70.pth",
         type=str,
         help="path to pretrained model",
     )
@@ -79,6 +80,13 @@ if __name__ == "__main__":
         default=5,
         type=int,
         help="Minimum frequency",
+    )
+    parser.add_argument(
+        "-beamsize",
+        "--beamsize",
+        default=10,
+        type=int,
+        help="Beam size",
     )
     config = parser.parse_args()
     main(vars(config))
