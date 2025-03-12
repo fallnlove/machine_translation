@@ -59,7 +59,7 @@ class Inferencer:
 
         for i in range(batch["source"].shape[0]):
             unk = []
-            sent = batch["source_text"][i].split(' ')
+            sent = batch["source_text"][i]
             for j in range(batch["source"].shape[1]):
                 if batch["source"][i, j] == self.datasets["test"].UNK:
                     unk.append(sent[j])

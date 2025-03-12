@@ -64,7 +64,7 @@ class CustomDataset(Dataset):
             tokens = self.tokenizers[language](self.texts[language][index])
             data[part] = torch.LongTensor([self.BOS] + self.vocabs[language](tokens) + [self.EOS])
         data["length"] = len(data["source"])
-        data["source_text"] = self.texts["de"][index]
+        data["source_text"] = self.tokenizers["de"](self.texts["de"][index])
         data["ground_truth"] = self.texts[language][index]
 
         return data
