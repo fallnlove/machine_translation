@@ -84,7 +84,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "-beamsize",
         "--beamsize",
-        default=10,
+        default=1,
         type=int,
         help="Beam size",
     )

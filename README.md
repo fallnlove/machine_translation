@@ -2,12 +2,6 @@
 
 ## Training model
 
-To split the dataset into train and validation parts, run the command:
-
-```bash
-python src/scripts/make_dataset.py --path PATH_TO_DATASET
-```
-
 To start the training and inference process, run the command:
 
 ```bash
@@ -35,4 +29,3 @@ You can specify the path to the dataset using the `--path` option.  -->
 
 Predictions will
 be saved in the `submissions` directory.
-# hse_hw2_chip
